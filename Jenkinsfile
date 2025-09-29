@@ -1,34 +1,44 @@
+def gv
+
 pipeline {
     agent any
-    parameters{
-        choice(name: 'VERSION', choices: ['1.1.0','1.2.0','1.3.0'], description: '')
-        booleanParam(name:'executeTests', defaultValue: true, description: '')
+    parameters {
+        choice(name: 'VERSION', choices: ['1.1.0', '1.2.0', '1.3.0'], description: '')
+        booleanParam(name: 'executeTests', defaultValue: true, description: '')
     }
-
     stages {
-        stage('Build') {
+        stage("init") {
             steps {
-                echo "Building the app"
-                // If your app has a build step, run it
-                // For example: npm run build (Next.js, React, Vite, etc.)
+                script {
+                   gv = load "script.groovy" 
+                }
             }
         }
-
-        stage('Test') {
+        stage("build") {
+            steps {
+                script {
+                    gv.buildApp()
+                }
+            }
+        }
+        stage("test") {
             when {
                 expression {
                     params.executeTests
                 }
             }
             steps {
-                echo "TESTING!!!"
+                script {
+                    gv.testApp()
+                }
             }
         }
-
-        stage('Run Dev Server') {
+        stage("deploy") {
             steps {
-                echo "Deploying the app"
+                script {
+                    gv.deployApp()
+                }
             }
         }
-    }
+    }   
 }
