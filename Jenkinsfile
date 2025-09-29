@@ -1,25 +1,33 @@
 pipeline {
     agent any
-    
+    parameters{
+        choice(name: 'VERSION', choices: ['1.1.0','1.2.0','1.3.0'], description: '')
+        booleanParam(name:'executeTests', defaultValue: true, description: '')
+    }
+
     stages {
-        stage("init") {
+        stage('Build') {
             steps {
-                echo "init"
+                echo "Building the app"
+                // If your app has a build step, run it
+                // For example: npm run build (Next.js, React, Vite, etc.)
             }
         }
-        stage("build") {
+
+        stage('Test') {
+            when {
+                expression {
+                    params.executeTests
+                }
+            }
             steps {
-                echo "building the app"
+                echo "TESTING!!!"
             }
         }
-        stage("test") {
+
+        stage('Run Dev Server') {
             steps {
-                echo "testing the app"
-            }
-        }
-        stage("deploy") {
-            steps {
-                echo "deploying the app"
+                echo "Deploying the app"
             }
         }
     }
